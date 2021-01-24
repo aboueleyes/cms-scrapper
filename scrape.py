@@ -6,14 +6,14 @@ This script allows the user to scarpe all video links and save it to a file
 
 import argparse
 import getpass
+import json
 import os
 import re
 import time
 import urllib.request
+
 import requests
 import urllib3
-import json
-
 from bs4 import BeautifulSoup as bs
 from iterfzf import iterfzf
 from requests_ntlm import HttpNtlmAuth
@@ -58,12 +58,14 @@ def get_credinalities():
         file_env.close()
     return user_name, pass_word
 
+
 username, password = get_credinalities()
 
 session = requests.Session()
 homePage = session.get("https://cms.guc.edu.eg/",
                        verify=False, auth=HttpNtlmAuth(username, password))
 homePage_soup = bs(homePage.text, 'html.parser')
+
 
 def get_avaliable_courses():
     ''' fetch courses links'''
@@ -79,6 +81,7 @@ def get_avaliable_courses():
             course_links.append(ans)
     return course_links
 
+
 def get_course_names():
     ''' get courses names'''
     courses_table = list(homePage_soup.find('table', {
@@ -88,6 +91,7 @@ def get_course_names():
         courses_name.append(re.sub(
             r'\n*[\(][\|]([^\|]*)[\|][\)]([^\(]*)[\(].*\n*', '[\\1]\\2', courses_table[i].text))
     return courses_name
+
 
 def choose_course():
     ''' promt the user to choose the string '''
@@ -106,18 +110,22 @@ def choose_course():
     course_url = links.get(course)
     return course_url
 
+
 course_link = choose_course()
 
 driver = webdriver.Chrome(desired_capabilities=caps, options=options)
 driver.get(
     f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
 
+
 def process_browser_log_entry(entry):
     ''' gets log of process'''
     response = json.loads(entry['message'])['message']
     return response
 
-names, links = [] , []
+
+names, links = [], []
+
 
 def get_link_master():
     ''' scape m3u8 link for one video '''
@@ -134,6 +142,8 @@ def get_link_master():
                         if re.search("master", event['params']['response']['url']):
                             links.append(event['params']['response']['url'])
                             return
+
+
 def get_video_ids():
     ''' get id for videos and pass it to get the link master '''
     for _ in range(1000):
@@ -164,7 +174,9 @@ def get_video_ids():
         except:
             print("")
         time.sleep(0.3)
-if __name__ ==  "__main__":
+
+
+if __name__ == "__main__":
     get_video_ids()
     my_dict = dict(zip(links, names))
 
