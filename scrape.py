@@ -164,4 +164,9 @@ def get_video_ids():
         except:
             print("")
         time.sleep(0.3)
+if __name__ ==  "__main__":
+    get_video_ids()
+    my_dict = dict(zip(links, names))
 
+    with open(args.o, 'w') as f:
+        print(my_dict, file=f)
