@@ -178,6 +178,7 @@ def get_video_ids():
 
 if __name__ == "__main__":
     get_video_ids()
+    driver.quit()
     my_dict = dict(zip(links, names))
 
     with open(args.o, 'w') as f:
