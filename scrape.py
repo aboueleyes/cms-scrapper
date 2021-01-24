@@ -137,7 +137,7 @@ def get_link_master():
             event for event in events if 'Network.response' in event['method']]
 
         for event in events:
-            if 'params' in event['params'].keys():
+            if 'params' in event.keys():
                 if 'response' in event['params'].keys():
                     if 'url' in event['params']['response'].keys():
                         if re.search("master", event['params']['response']['url']):
@@ -171,11 +171,11 @@ def get_video_ids():
             button = driver.find_element_by_id(item)
             driver.execute_script("arguments[0].click();", button)
             time.sleep(0.3)
-            bar()
             try:
                 get_link_master()
             except:
                 print("")
+            bar()
             time.sleep(0.3)
 
 
