@@ -12,6 +12,7 @@ import time
 import urllib.request
 import requests
 import urllib3
+import json
 
 from bs4 import BeautifulSoup as bs
 from iterfzf import iterfzf
@@ -89,3 +90,19 @@ def get_course_names():
             r'\n*[\(][\|]([^\|]*)[\|][\)]([^\(]*)[\(].*\n*', '[\\1]\\2', courses_table[i].text))
     return courses_name
 
+def choose_course():
+    ''' promt the user to choose the string '''
+    if not os.path.isfile(".courses.json"):
+        courses_links = get_avaliable_courses()
+        courses_names = get_course_names()
+        courses = dict(zip(courses_names, courses_links))
+        with open(".courses.json", "w") as outfile:
+            json.dump(courses, outfile)
+    with open('.courses.json') as json_file:
+        links = json.load(json_file)
+    courses = []
+    for i in links:
+        courses.append(i)
+    course = iterfzf(courses)
+    course_url = links.get(course)
+    return course_url
