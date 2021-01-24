@@ -40,7 +40,6 @@ caps['goog:loggingPrefs'] = {'performance': 'ALL'}
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument("--window-size=1920,1080")
-driver = webdriver.Chrome(desired_capabilities=caps, options=options)
 
 
 def get_credinalities():
@@ -106,3 +105,33 @@ def choose_course():
     course = iterfzf(courses)
     course_url = links.get(course)
     return course_url
+
+course_link = choose_course()
+
+driver = webdriver.Chrome(desired_capabilities=caps, options=options)
+driver.get(
+    f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
+
+def process_browser_log_entry(entry):
+    ''' gets log of process'''
+    response = json.loads(entry['message'])['message']
+    return response
+
+names, links = [] , []
+
+def get_link_master():
+    ''' scape m3u8 link for one video '''
+    while True:
+        browser_log = driver.get_log('performance')
+        events = [process_browser_log_entry(entry) for entry in browser_log]
+        events = [
+            event for event in events if 'Network.response' in event['method']]
+
+        for event in events:
+            if 'params' in event['params'].keys():
+                if 'response' in event['params'].keys():
+                    if 'url' in event['params']['response'].keys():
+                        if re.search("master", event['params']['response']['url']):
+                            links.append(event['params']['response']['url'])
+                            return
+
