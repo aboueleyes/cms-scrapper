@@ -48,7 +48,7 @@ def get_credinalities():
         user_name = input("Enter your username : ")
         pass_word = getpass.getpass(prompt="Enter Your Password : ")
         file_env = open(".credenalites", "w")
-        file_env.write(username+"\n"+password)
+        file_env.write(user_name+"\n"+pass_word)
         file_env.close()
     else:
         file_env = open("env", "r")
@@ -69,7 +69,7 @@ homePage_soup = bs(homePage.text, 'html.parser')
 
 def get_avaliable_courses():
     ''' fetch courses links'''
-    print("[-] Fetching Courses(-)")
+    print("[-] Fetching Courses[-]")
     course_links = []
     link_tags = homePage_soup('a')
     for link_tag in link_tags:
