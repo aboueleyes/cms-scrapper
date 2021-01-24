@@ -134,4 +134,34 @@ def get_link_master():
                         if re.search("master", event['params']['response']['url']):
                             links.append(event['params']['response']['url'])
                             return
+def get_video_ids():
+    ''' get id for videos and pass it to get the link master '''
+    for _ in range(1000):
+        driver.execute_script(
+            "window.scrollTo(0, document.body.scrollHeight);")
+    ids = []
+    # print all of the page source that was loaded
+    course_soup = bs(driver.page_source.encode("utf-8"), 'html.parser')
+    inputs = course_soup('input')
+    for ink in inputs:
+        if ink.get('value') == 'Watch Video':
+            if ink['id'] != "":
+                ids.append(ink['id'])
+                name = ink.find_parent('div').find_parent(
+                    'div').find_parent('div')('strong')
+                name_new = re.sub(r'[0-9]* - (.*)', "\\1", str(name))
+                names.append(name_new.replace(
+                    "[<strong>", "").replace("</strong>]", "").replace("&amp;", "").strip())
+    for item in ids:
+        driver.get(
+            f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
+        time.sleep(0.6)
+        button = driver.find_element_by_id(item)
+        driver.execute_script("arguments[0].click();", button)
+        time.sleep(0.3)
+        try:
+            get_link_master()
+        except:
+            print("")
+        time.sleep(0.3)
 
