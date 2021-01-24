@@ -15,3 +15,6 @@ from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
+praser = argparse.ArgumentParser()
+praser.add_argument('-o')
+args = praser.parse_args()
