@@ -11,7 +11,7 @@ import os
 import re
 import time
 import urllib.request
-
+from alive_progress import alive_bar
 import requests
 import urllib3
 from bs4 import BeautifulSoup as bs
@@ -162,18 +162,20 @@ def get_video_ids():
                 name_new = re.sub(r'[0-9]* - (.*)', "\\1", str(name))
                 names.append(name_new.replace(
                     "[<strong>", "").replace("</strong>]", "").replace("&amp;", "").strip())
-    for item in ids:
-        driver.get(
-            f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
-        time.sleep(0.6)
-        button = driver.find_element_by_id(item)
-        driver.execute_script("arguments[0].click();", button)
-        time.sleep(0.3)
-        try:
-            get_link_master()
-        except:
-            print("")
-        time.sleep(0.3)
+    with alive_bar(len(ids), title='getting grades', bar='filling') as bar:
+        for item in ids:
+            driver.get(
+                f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
+            time.sleep(0.6)
+            button = driver.find_element_by_id(item)
+            driver.execute_script("arguments[0].click();", button)
+            time.sleep(0.3)
+            bar()
+            try:
+                get_link_master()
+            except:
+                print("")
+            time.sleep(0.3)
 
 
 if __name__ == "__main__":
