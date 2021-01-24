@@ -52,7 +52,7 @@ def get_credinalities():
         file_env.write(user_name+"\n"+pass_word)
         file_env.close()
     else:
-        file_env = open("env", "r")
+        file_env = open(".env", "r")
         lines = file_env.readlines()
         user_name = lines[0].strip()
         pass_word = lines[1].strip()
