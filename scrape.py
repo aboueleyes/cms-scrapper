@@ -47,7 +47,7 @@ def get_credinalities():
     if not os.path.isfile(".env"):
         user_name = input("Enter your username : ")
         pass_word = getpass.getpass(prompt="Enter Your Password : ")
-        file_env = open(".credenalites", "w")
+        file_env = open(".env", "w")
         file_env.write(user_name+"\n"+pass_word)
         file_env.close()
     else:
@@ -162,7 +162,7 @@ def get_video_ids():
                 name_new = re.sub(r'[0-9]* - (.*)', "\\1", str(name))
                 names.append(name_new.replace(
                     "[<strong>", "").replace("</strong>]", "").replace("&amp;", "").strip())
-    with alive_bar(len(ids), title='getting grades', bar='filling') as bar:
+    with alive_bar(len(ids), title='scrapping links', bar='filling') as bar:
         for item in ids:
             driver.get(
                 f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
