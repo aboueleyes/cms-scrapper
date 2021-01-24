@@ -11,9 +11,10 @@ import os
 import re
 import time
 import urllib.request
-from alive_progress import alive_bar
+
 import requests
 import urllib3
+from alive_progress import alive_bar
 from bs4 import BeautifulSoup as bs
 from iterfzf import iterfzf
 from requests_ntlm import HttpNtlmAuth
