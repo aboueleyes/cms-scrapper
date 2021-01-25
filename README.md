@@ -11,14 +11,19 @@ The script scrapes the m3u8 file so you can access the videos from dacast direct
 Scrapping
 
 [![asciicast](https://asciinema.org/a/RJ1c0PynTzM1u0hhWznKBLMm1.svg)](https://asciinema.org/a/RJ1c0PynTzM1u0hhWznKBLMm1)
+
 Downloading 
 
 [![asciicast](https://asciinema.org/a/TxObSGcbKXoq4J5bZjIqs50KH.svg)](https://asciinema.org/a/TxObSGcbKXoq4J5bZjIqs50KH)
 
+playing 
+
+[![asciicast](https://asciinema.org/a/igiytcXttjgadEWaHhOaPGsus.svg)](https://asciinema.org/a/igiytcXttjgadEWaHhOaPGsus)
+
 ## Installation 
 
 ```bash
-> sudo apt install git chromium-chromedriver python3-pip ffmpeg nodejs npm
+> sudo apt install git chromium-chromedriver python3-pip ffmpeg nodejs npm mpv
 > sudo npm install --global ffmpeg-progressbar-cli    
 > git clone https://github.com/aboueleyes/cms-scrapper.git
 > cd cms-scrapper/
