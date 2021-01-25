@@ -6,8 +6,10 @@ use youtube-dl to download videos
 import argparse
 import json
 import os
-
+import m3u8
 from iterfzf import iterfzf
+import mder
+import wget 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', type=argparse.FileType('r'))
@@ -22,4 +24,6 @@ to_be_downoaded = iterfzf(video_names, multi=True)
 for item in to_be_downoaded:
     index = video_names.index(item)
     link = list(data.keys())[index]
-    os.system(f'youtube-dl  "{link}" -o "{item}.mp4"')
+    command = f'ffmpeg-bar -i "{link}"  -bsf:a aac_adtstoasc -vcodec copy -c copy -crf 50 "{item}.mp4"'
+    os.system(command)
+
