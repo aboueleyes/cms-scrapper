@@ -5,7 +5,6 @@ This script allows the user to scarpe all video links and save it to a file
 """
 
 import argparse
-import getpass
 import json
 import os
 import re
@@ -17,6 +16,7 @@ import urllib3
 from alive_progress import alive_bar
 from bs4 import BeautifulSoup as bs
 from iterfzf import iterfzf
+from PyInquirer import print_json, prompt
 from requests_ntlm import HttpNtlmAuth
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
@@ -42,14 +42,26 @@ options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument("--window-size=1920,1080")
 
-
+questions = [
+    {
+        'type': 'input',
+        'name': 'username',
+        'message': 'What\'s your username:',
+    },
+    {
+        'type': 'password',
+        'message': 'Enter your GUC password:',
+        'name': 'password'
+    }
+]
 def get_credinalities():
     ''' login to cms website'''
     if not os.path.isfile(".env"):
-        user_name = input("Enter your username : ")
-        pass_word = getpass.getpass(prompt="Enter Your Password : ")
+        cred = prompt(questions)
+        user_name = list(cred.keys())[0]
+        pass_word = list(cred.keys())[1]
         file_env = open(".env", "w")
-        file_env.write(user_name+"\n"+pass_word)
+        file_env.write(user_name+"\n"+str(pass_word))
         file_env.close()
     else:
         file_env = open(".env", "r")
