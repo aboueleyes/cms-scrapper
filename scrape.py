@@ -58,8 +58,8 @@ def get_credinalities():
     ''' login to cms website'''
     if not os.path.isfile(".env"):
         cred = prompt(questions)
-        user_name = list(cred.keys())[0]
-        pass_word = list(cred.keys())[1]
+        user_name = list(cred.values())[0]
+        pass_word = list(cred.values())[1]
         file_env = open(".env", "w")
         file_env.write(user_name+"\n"+str(pass_word))
         file_env.close()
@@ -82,7 +82,7 @@ homePage_soup = bs(homePage.text, 'html.parser')
 
 def get_avaliable_courses():
     ''' fetch courses links'''
-    print("[-] Fetching Courses[-]")
+    print("[-] Fetching Courses [-]")
     course_links = []
     link_tags = homePage_soup('a')
     for link_tag in link_tags:
