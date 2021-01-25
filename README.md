@@ -1,22 +1,22 @@
 # cms-scrapper
 A selenium (headless browser) script that scrapes video links from CMS website
 
-> **⚠️ This script is made for linux , if you are using Windows it is pain ,just use linux **
+> ⚠️ This script is made for Linux, if you are using Windows it is pain, just use Linux 
 
 ## Description
 
 The script scrapes the m3u8 file so you can access the videos from dacast directly, making it very easy to stream or to download 
 
 ## Showcase 
-Scrapping
+#### Scrapping
 
 [![asciicast](https://asciinema.org/a/RJ1c0PynTzM1u0hhWznKBLMm1.svg)](https://asciinema.org/a/RJ1c0PynTzM1u0hhWznKBLMm1)
 
-Downloading 
+#### Downloading 
 
 [![asciicast](https://asciinema.org/a/TxObSGcbKXoq4J5bZjIqs50KH.svg)](https://asciinema.org/a/TxObSGcbKXoq4J5bZjIqs50KH)
 
-playing 
+#### Playing 
 
 [![asciicast](https://asciinema.org/a/igiytcXttjgadEWaHhOaPGsus.svg)](https://asciinema.org/a/igiytcXttjgadEWaHhOaPGsus)
 
@@ -34,7 +34,7 @@ Also you need mpv or vlc to stream the videos
 ## Usage 
 ```bash 
 > python scrape.py -o "links_file"
->  python play.py -i "links_file" # for streaming
+> python play.py -i "links_file" # for streaming
 > python download.py -i "links_file" # for downloading
  ```
 ##  Contribution 
