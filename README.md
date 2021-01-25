@@ -30,7 +30,7 @@ Also you need mpv or vlc to stream the videos
 ## Usage 
 ```bash 
 > python scrape.py -o "links_file"
-> mpv "video_link" # for steraming
+>  python play.py -i "links_file" # for streaming
 > python download.py -i "links_file" # for downloading
  ```
 ##  Contribution 
