@@ -140,7 +140,7 @@ def process_browser_log_entry(entry):
 names, links = [], []
 
 
-def get_link_master():
+def get_link_master(driver):
     ''' scape m3u8 link for one video '''
     while True:
         browser_log = driver.get_log('performance')
@@ -157,7 +157,7 @@ def get_link_master():
                             return
 
 
-def get_video_ids():
+def get_video_ids(driver):
     ''' get id for videos and pass it to get the link master '''
     for _ in range(1000):
         driver.execute_script(
@@ -177,22 +177,22 @@ def get_video_ids():
                     "[<strong>", "").replace("</strong>]", "").replace("&amp;", "").strip())
     with alive_bar(len(ids), title='scrapping links', bar='filling') as bar:
         for item in ids:
+            driver.quit()
+            driver = webdriver.Chrome(desired_capabilities=caps, options=options)
+            
             driver.get(
                 f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
-            time.sleep(0.6)
             button = driver.find_element_by_id(item)
             driver.execute_script("arguments[0].click();", button)
-            time.sleep(0.3)
             try:
-                get_link_master()
+                get_link_master(driver)
             except:
                 print("")
             bar()
-            time.sleep(0.3)
 
 
 if __name__ == "__main__":
-    get_video_ids()
+    get_video_ids(driver)
     driver.quit()
     my_dict = dict(zip(links, names))
     with open(args.o, 'w') as fp:
