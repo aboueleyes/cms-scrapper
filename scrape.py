@@ -8,7 +8,6 @@ import argparse
 import json
 import os
 import re
-import time
 import urllib.request
 
 import requests
@@ -54,6 +53,8 @@ questions = [
         'name': 'password'
     }
 ]
+
+
 def get_credinalities():
     ''' login to cms website'''
     if not os.path.isfile(".env"):
@@ -163,7 +164,6 @@ def get_video_ids(driver):
         driver.execute_script(
             "window.scrollTo(0, document.body.scrollHeight);")
     ids = []
-    # print all of the page source that was loaded
     course_soup = bs(driver.page_source.encode("utf-8"), 'html.parser')
     inputs = course_soup('input')
     for ink in inputs:
@@ -178,8 +178,9 @@ def get_video_ids(driver):
     with alive_bar(len(ids), title='scrapping links', bar='filling') as bar:
         for item in ids:
             driver.quit()
-            driver = webdriver.Chrome(desired_capabilities=caps, options=options)
-            
+            driver = webdriver.Chrome(
+                desired_capabilities=caps, options=options)
+
             driver.get(
                 f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
             button = driver.find_element_by_id(item)
