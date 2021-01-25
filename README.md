@@ -19,7 +19,7 @@ Downloading
 ## Installation 
 
 ```bash
-> sudo apt install git chromium-chromedriver python3-pip ffmpeg
+> sudo apt install git chromium-chromedriver python3-pip ffmpeg nodejs npm
 > sudo npm install --global ffmpeg-progressbar-cli    
 > git clone https://github.com/aboueleyes/cms-scrapper.git
 > cd cms-scrapper/
