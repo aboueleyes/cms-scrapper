@@ -15,7 +15,6 @@ args = parser.parse_args()
 
 f = args.i
 s = f.read()
-s = s.replace('\'', '\"')
 data = json.loads(s)
 video_names = list(data.values())
 to_be_downoaded = iterfzf(video_names, multi=True)

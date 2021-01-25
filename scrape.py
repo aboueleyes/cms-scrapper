@@ -183,6 +183,5 @@ if __name__ == "__main__":
     get_video_ids()
     driver.quit()
     my_dict = dict(zip(links, names))
-
-    with open(args.o, 'w') as f:
-        print(my_dict, file=f)
+    with open(args.o, 'w') as fp:
+        json.dump(my_dict, fp)
