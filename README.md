@@ -10,8 +10,7 @@ The script scrapes the m3u8 file so you can access the videos from dacast direct
 ## Showcase 
 Scrapping
 
-[![asciicast](https://asciinema.org/a/386928.svg)](https://asciinema.org/a/386928)
-
+[![asciicast](https://asciinema.org/a/RJ1c0PynTzM1u0hhWznKBLMm1.svg)](https://asciinema.org/a/RJ1c0PynTzM1u0hhWznKBLMm1)
 Downloading 
 
 [![asciicast](https://asciinema.org/a/ldXi4SQtWZ4EQf5Z5km0aBqoS.svg)](https://asciinema.org/a/ldXi4SQtWZ4EQf5Z5km0aBqoS)
