@@ -1,0 +1,6 @@
+requests
+iterfzf
+requests_ntlm
+bs4
+selenium
+alive_progress
