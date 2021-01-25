@@ -25,7 +25,7 @@ Downloading
 > cd cms-scrapper/
 > sudo pip3 install -r requirements.txt
 ```
-Also you need mpv or vlc to stream the videos and youtube-dl to download 
+Also you need mpv or vlc to stream the videos
 
 ## Usage 
 ```bash 
