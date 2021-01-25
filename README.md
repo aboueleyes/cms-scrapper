@@ -16,7 +16,9 @@ The script scrapes the m3u8 file so you can access the videos from dacast direct
 > sudo pip3 install -r requirements.txt
 ```
 Also you need mpv or vlc to stream the videos and youtube-dl to download 
-
+## Showcase 
+[![asciicast](https://asciinema.org/a/386928.svg)]
+(https://asciinema.org/a/386928)
 ## Usage 
 ```bash 
 > python scrape.py -o "links_file"
