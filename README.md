@@ -1,4 +1,6 @@
 # cms-scrapper
+A selenium (headless browser) script that scrapes video links from CMS website
+
 > **⚠️ This script is made for linux , if you are using Windows it is pain ,just use linux **
 
 ## Description
