@@ -136,10 +136,18 @@ def choose_course():
     courses = []
     for i in links:
         courses.append(i)
-    course = iterfzf(courses)
+    questions = [
+    {
+        'type': 'list',
+        'name': 'theme',
+        'message': 'What Course do you want?',
+        'choices': courses
+    }
+    ]
+    course = prompt(questions)
+    course = list(course.values())[0]
     course_url = links.get(course)
     return course_url
-
 
 course_link = choose_course()
 
