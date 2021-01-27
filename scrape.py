@@ -5,12 +5,14 @@ This script allows the user to scarpe all video links and save it to a file
 """
 
 import argparse
+import sys
 import json
 import os
 import re
 import urllib.request
 
 import requests
+import time 
 import urllib3
 from alive_progress import alive_bar
 from bs4 import BeautifulSoup as bs
@@ -42,7 +44,7 @@ praser.add_argument('--verbose', '-v',
 args = praser.parse_args()
 # ssl Warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
+console = Console()
 # selenium options
 caps = DesiredCapabilities.CHROME
 caps['goog:loggingPrefs'] = {'performance': 'ALL'}
@@ -63,6 +65,17 @@ questions = [
     }
 ]
 
+def authenticate_user(username,password) :
+    session = requests.Session()
+    r = session.get("https://cms.guc.edu.eg/",
+                       verify=False, auth=HttpNtlmAuth(username, password))
+    if r.status_code == 200:
+        console.log("[+] You are authorized",style="bold green")
+    else:
+        console.log("[!] You are not authorized. review your login credentials",style="bold red")
+        if os.path.isfile(".env") :
+            os.remove(".env")
+        sys.exit(1)
 
 def get_credinalities():
     ''' login to cms website'''
@@ -70,6 +83,7 @@ def get_credinalities():
         cred = prompt(questions)
         user_name = list(cred.values())[0]
         pass_word = list(cred.values())[1]
+        authenticate_user(user_name,pass_word)
         file_env = open(".env", "w")
         file_env.write(user_name+"\n"+str(pass_word))
         file_env.close()
@@ -78,12 +92,13 @@ def get_credinalities():
         lines = file_env.readlines()
         user_name = lines[0].strip()
         pass_word = lines[1].strip()
+        authenticate_user(user_name, pass_word)
         file_env.close()
     return user_name, pass_word
 
 
-username, password = get_credinalities()
 
+username, password = get_credinalities()
 session = requests.Session()
 homePage = session.get("https://cms.guc.edu.eg/",
                        verify=False, auth=HttpNtlmAuth(username, password))
@@ -103,7 +118,7 @@ def get_avaliable_courses():
             match = re.match(r'\/apps\/student\/CourseViewStn\?id(.*)', ans)
             if match:
                 course_links.append(ans)
-                if args.verbose > 1:
+                if args.verbose > 0:
                     console.log(f"course_link : {course_links[-1]}")
     return course_links
 
@@ -118,7 +133,7 @@ def get_course_names():
         for i in range(2, len(courses_table) - 1):
             courses_name.append(re.sub(
                 r'\n*[\(][\|]([^\|]*)[\|][\)]([^\(]*)[\(].*\n*', '[\\1]\\2', courses_table[i].text))
-            if args.verbose > 1:
+            if args.verbose > 0:
                 console.log(courses_name[-1])
     return courses_name
 
@@ -152,6 +167,9 @@ def choose_course():
 course_link = choose_course()
 
 driver = webdriver.Chrome(desired_capabilities=caps, options=options)
+if args.verbose > 0 :
+    console = Console()
+    console.log("[-] Intailizing The Browser",style="bold yellow")
 driver.get(
     f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
 
@@ -182,33 +200,39 @@ def get_link_master(driver):
                         if re.search("master", event['params']['response']['url']):
                             links.append(event['params']['response']['url'])
                             if args.verbose > 0:
-                                print(
+                                console.log(
                                     f" {event['params']['response']['url']} ")
                             return
 
 
 def get_video_ids(driver):
     ''' get id for videos and pass it to get the link master '''
-    for _ in range(1000):
-        driver.execute_script(
-            "window.scrollTo(0, document.body.scrollHeight);")
-    ids = []
-    course_soup = bs(driver.page_source.encode("utf-8"), 'html.parser')
-    inputs = course_soup('input')
     console = Console()
     with console.status("[bold green] Getting videos names and ids") as status:
+        for _ in range(30):
+            driver.execute_script(
+                "window.scrollTo(0, document.body.scrollHeight);")
+        ids = []
+        course_soup = bs(driver.page_source.encode("utf-8"), 'html.parser')
+        inputs = course_soup('input')
+
         for index, ink in enumerate(inputs):
             if ink.get('value') == 'Watch Video':
                 if ink['id'] != "":
                     ids.append(ink['id'])
+                    if args.verbose > 1:
+                        time.sleep(0.05)
+                        console.log(ids[-1])
                     name = ink.find_parent('div').find_parent(
                         'div').find_parent('div')('strong')
                     name_new = re.sub(r'[0-9]* - (.*)', "\\1", str(name))
                     names.append(name_new.replace(
                         "[<strong>", "").replace("</strong>]", "").replace("&amp;", "").strip())
                     if args.verbose > 1:
-                        console.log(ids[-1] + " :" + names[-1])
-    with alive_bar(len(ids), title='scrapping links', bar='classic') as bar:
+                        time.sleep(0.05)
+                        console.log(names[-1])
+
+    with alive_bar(len(ids), title='Scrapping links', bar='blocks',spinner='dots_reverse') as bar:
         for item in ids:
             driver.quit()
             driver = webdriver.Chrome(
