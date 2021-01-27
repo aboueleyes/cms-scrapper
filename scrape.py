@@ -27,7 +27,12 @@ __license__ = 'MIT'
 __version__ = '2021.1.0'
 
 # args options
-praser = argparse.ArgumentParser()
+praser = argparse.ArgumentParser(
+            prog="cms-scrapper",
+            description= ''' 
+                scarpe m3u8 for cms website
+            '''
+        )
 praser.add_argument('-o','--output',help='name of output file',required=True)
 praser.add_argument('--verbose', '-v',help='be more talktive',action='count', default=0)
 args = praser.parse_args()
@@ -45,7 +50,7 @@ questions = [
     {
         'type': 'input',
         'name': 'username',
-        'message': 'What\'s your username:',
+        'message': 'Enter your username:',
     },
     {
         'type': 'password',
@@ -83,7 +88,8 @@ homePage_soup = bs(homePage.text, 'html.parser')
 
 def get_avaliable_courses():
     ''' fetch courses links'''
-    print("[-] Fetching Courses [-]")
+    if args.verbose > 0 :
+        print("[-] Fetching Courses")
     course_links = []
     link_tags = homePage_soup('a')
     for link_tag in link_tags:
@@ -93,6 +99,8 @@ def get_avaliable_courses():
         match = re.match(r'\/apps\/student\/CourseViewStn\?id(.*)', ans)
         if match:
             course_links.append(ans)
+            if args.verbose > 1 :
+                print (f"course_link : {course_links[-1]}")
     return course_links
 
 
@@ -103,7 +111,9 @@ def get_course_names():
     courses_name = []
     for i in range(2, len(courses_table) - 1):
         courses_name.append(re.sub(
-            r'\n*[\(][\|]([^\|]*)[\|][\)]([^\(]*)[\(].*\n*', '[\\1]\\2', courses_table[i].text))
+            r'\n*[\(][\|]([^\|]*)[\|][\)]([^\(]*)[\(].*\n*', '[\\1]\\2', courses_table[i].text))  
+        if args.verbose > 1 :
+            print (courses_name[-1])
     return courses_name
 
 
@@ -181,7 +191,7 @@ def get_video_ids(driver):
                     "[<strong>", "").replace("</strong>]", "").replace("&amp;", "").strip())
                 if args.verbose > 1 :
                     print(ids[-1] +" :" + names[-1])
-    with alive_bar(len(ids), title='scrapping links', bar='filling') as bar:
+    with alive_bar(len(ids), title='scrapping links', bar='classic') as bar:
         for item in ids:
             driver.quit()
             driver = webdriver.Chrome(
