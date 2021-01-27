@@ -28,7 +28,7 @@ __version__ = '2021.1.0'
 
 # args options
 praser = argparse.ArgumentParser()
-praser.add_argument('-o')
+praser.add_argument('-o','--output',help='name of output file',required=True)
 args = praser.parse_args()
 
 # ssl Warning
@@ -195,6 +195,7 @@ def get_video_ids(driver):
 if __name__ == "__main__":
     get_video_ids(driver)
     driver.quit()
+
     my_dict = dict(zip(links, names))
     with open(args.o, 'w') as fp:
         json.dump(my_dict, fp)
