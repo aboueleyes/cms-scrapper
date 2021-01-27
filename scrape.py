@@ -213,6 +213,7 @@ def get_video_ids(driver):
                 get_link_master(driver)
             except:
                 print("")
+            bar()    
 
 
 if __name__ == "__main__":
