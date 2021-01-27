@@ -6,11 +6,11 @@ import os
 from iterfzf import iterfzf
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', type=argparse.FileType('r'))
+parser.add_argument('-i','--input',type=argparse.FileType('r'),required=True)
 args = parser.parse_args()
 
-f = args.i
-s = f.read()
+file_name = args.input
+s = file_name.read()
 data = json.loads(s)
 video_names = list(data.values())
 to_be_downloaded = iterfzf(video_names)

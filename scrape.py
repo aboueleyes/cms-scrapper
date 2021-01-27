@@ -197,5 +197,5 @@ if __name__ == "__main__":
     driver.quit()
 
     my_dict = dict(zip(links, names))
-    with open(args.o, 'w') as fp:
+    with open(args.output, 'w') as fp:
         json.dump(my_dict, fp)
