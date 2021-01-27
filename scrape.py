@@ -17,6 +17,8 @@ from bs4 import BeautifulSoup as bs
 from iterfzf import iterfzf
 from PyInquirer import print_json, prompt
 from requests_ntlm import HttpNtlmAuth
+from rich import print
+from rich.console import Console
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -28,13 +30,15 @@ __version__ = '2021.1.0'
 
 # args options
 praser = argparse.ArgumentParser(
-            prog="cms-scrapper",
-            description= ''' 
+    prog="cms-scrapper",
+    description=''' 
                 scarpe m3u8 for cms website
             '''
-        )
-praser.add_argument('-o','--output',help='name of output file',required=True)
-praser.add_argument('--verbose', '-v',help='be more talktive',action='count', default=0)
+)
+praser.add_argument(
+    '-o', '--output', help='name of output file', required=True)
+praser.add_argument('--verbose', '-v',
+                    help='be more talktive', action='count', default=0)
 args = praser.parse_args()
 # ssl Warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -88,32 +92,34 @@ homePage_soup = bs(homePage.text, 'html.parser')
 
 def get_avaliable_courses():
     ''' fetch courses links'''
-    if args.verbose > 0 :
-        print("[-] Fetching Courses")
+    console = Console()
     course_links = []
     link_tags = homePage_soup('a')
-    for link_tag in link_tags:
-        ans = link_tag.get('href', None)
-        if ans is None:
-            continue
-        match = re.match(r'\/apps\/student\/CourseViewStn\?id(.*)', ans)
-        if match:
-            course_links.append(ans)
-            if args.verbose > 1 :
-                print (f"course_link : {course_links[-1]}")
+    with console.status("[bold green] Fetching courses") as status:
+        for link_tag in link_tags:
+            ans = link_tag.get('href', None)
+            if ans is None:
+                continue
+            match = re.match(r'\/apps\/student\/CourseViewStn\?id(.*)', ans)
+            if match:
+                course_links.append(ans)
+                if args.verbose > 1:
+                    console.log(f"course_link : {course_links[-1]}")
     return course_links
 
 
 def get_course_names():
+    console = Console()
     ''' get courses names'''
     courses_table = list(homePage_soup.find('table', {
         'id': 'ContentPlaceHolderright_ContentPlaceHoldercontent_GridViewcourses'}))
     courses_name = []
-    for i in range(2, len(courses_table) - 1):
-        courses_name.append(re.sub(
-            r'\n*[\(][\|]([^\|]*)[\|][\)]([^\(]*)[\(].*\n*', '[\\1]\\2', courses_table[i].text))  
-        if args.verbose > 1 :
-            print (courses_name[-1])
+    with console.status("[bold green] getting courses names") as status:
+        for i in range(2, len(courses_table) - 1):
+            courses_name.append(re.sub(
+                r'\n*[\(][\|]([^\|]*)[\|][\)]([^\(]*)[\(].*\n*', '[\\1]\\2', courses_table[i].text))
+            if args.verbose > 1:
+                console.log(courses_name[-1])
     return courses_name
 
 
@@ -160,15 +166,16 @@ def get_link_master(driver):
             event for event in events if 'Network.response' in event['method']]
 
         for event in events:
-            if args.verbose > 3 :
+            if args.verbose > 3:
                 print(event)
             if 'params' in event.keys():
                 if 'response' in event['params'].keys():
                     if 'url' in event['params']['response'].keys():
                         if re.search("master", event['params']['response']['url']):
                             links.append(event['params']['response']['url'])
-                            if args.verbose > 0 :
-                                print(event['params']['response']['url'])
+                            if args.verbose > 0:
+                                print(
+                                    f" {event['params']['response']['url']} ")
                             return
 
 
@@ -180,23 +187,24 @@ def get_video_ids(driver):
     ids = []
     course_soup = bs(driver.page_source.encode("utf-8"), 'html.parser')
     inputs = course_soup('input')
-    for index, ink in enumerate(inputs):
-        if ink.get('value') == 'Watch Video':
-            if ink['id'] != "":
-                ids.append(ink['id'])
-                name = ink.find_parent('div').find_parent(
-                    'div').find_parent('div')('strong')
-                name_new = re.sub(r'[0-9]* - (.*)', "\\1", str(name))
-                names.append(name_new.replace(
-                    "[<strong>", "").replace("</strong>]", "").replace("&amp;", "").strip())
-                if args.verbose > 1 :
-                    print(ids[-1] +" :" + names[-1])
+    console = Console()
+    with console.status("[bold green] Getting videos names and ids") as status:
+        for index, ink in enumerate(inputs):
+            if ink.get('value') == 'Watch Video':
+                if ink['id'] != "":
+                    ids.append(ink['id'])
+                    name = ink.find_parent('div').find_parent(
+                        'div').find_parent('div')('strong')
+                    name_new = re.sub(r'[0-9]* - (.*)', "\\1", str(name))
+                    names.append(name_new.replace(
+                        "[<strong>", "").replace("</strong>]", "").replace("&amp;", "").strip())
+                    if args.verbose > 1:
+                        console.log(ids[-1] + " :" + names[-1])
     with alive_bar(len(ids), title='scrapping links', bar='classic') as bar:
         for item in ids:
             driver.quit()
             driver = webdriver.Chrome(
                 desired_capabilities=caps, options=options)
-
             driver.get(
                 f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
             button = driver.find_element_by_id(item)
@@ -205,7 +213,6 @@ def get_video_ids(driver):
                 get_link_master(driver)
             except:
                 print("")
-            bar()
 
 
 if __name__ == "__main__":

@@ -5,3 +5,4 @@ bs4
 selenium
 alive_progress
 PyInquirer
+rich
