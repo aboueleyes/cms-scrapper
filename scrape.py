@@ -29,8 +29,8 @@ __version__ = '2021.1.0'
 # args options
 praser = argparse.ArgumentParser()
 praser.add_argument('-o','--output',help='name of output file',required=True)
+praser.add_argument('--verbose', '-v',help='be more talktive',action='count', default=0)
 args = praser.parse_args()
-
 # ssl Warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -150,11 +150,15 @@ def get_link_master(driver):
             event for event in events if 'Network.response' in event['method']]
 
         for event in events:
+            if args.verbose > 3 :
+                print(event)
             if 'params' in event.keys():
                 if 'response' in event['params'].keys():
                     if 'url' in event['params']['response'].keys():
                         if re.search("master", event['params']['response']['url']):
                             links.append(event['params']['response']['url'])
+                            if args.verbose > 0 :
+                                print(event['params']['response']['url'])
                             return
 
 
@@ -166,7 +170,7 @@ def get_video_ids(driver):
     ids = []
     course_soup = bs(driver.page_source.encode("utf-8"), 'html.parser')
     inputs = course_soup('input')
-    for ink in inputs:
+    for index, ink in enumerate(inputs):
         if ink.get('value') == 'Watch Video':
             if ink['id'] != "":
                 ids.append(ink['id'])
@@ -175,6 +179,8 @@ def get_video_ids(driver):
                 name_new = re.sub(r'[0-9]* - (.*)', "\\1", str(name))
                 names.append(name_new.replace(
                     "[<strong>", "").replace("</strong>]", "").replace("&amp;", "").strip())
+                if args.verbose > 1 :
+                    print(ids[-1] +" :" + names[-1])
     with alive_bar(len(ids), title='scrapping links', bar='filling') as bar:
         for item in ids:
             driver.quit()
