@@ -177,6 +177,8 @@ driver.get(
 def process_browser_log_entry(entry):
     ''' gets log of process'''
     response = json.loads(entry['message'])['message']
+    if args.verbose > 7 :
+        print(response)
     return response
 
 
@@ -193,7 +195,7 @@ def get_link_master(driver):
 
         for event in events:
             if args.verbose > 3:
-                print(event)
+                console.log(event)
             if 'params' in event.keys():
                 if 'response' in event['params'].keys():
                     if 'url' in event['params']['response'].keys():
