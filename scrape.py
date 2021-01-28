@@ -34,6 +34,7 @@ __copyright__ = 'Copyright (C) 2021 Ibrahim Abou Elenein'
 __license__ = 'MIT'
 __version__ = '2021.1.0'
 
+
 def authenticate_user(username, password):
     session = requests.Session()
     r = session.get("https://cms.guc.edu.eg/",
@@ -78,12 +79,11 @@ def welcome():
     console.print(Panel.fit(f'''        [bold cyan] Welcome [/bold cyan] [bold yellow] {first_name.upper()} {last_name.upper()} [/bold yellow]       
 
          [bold magenta]Run $ python srape.py -h for help[/bold magenta]           
-        ''', title="Welcome!"),justify="center")
+        ''', title="Welcome!"), justify="center")
 
 
 def get_avaliable_courses():
     ''' fetch courses links'''
-    console = Console()
     course_links = []
     link_tags = homePage_soup('a')
     console.rule("[::] Fetching courses")
@@ -98,12 +98,11 @@ def get_avaliable_courses():
                 course_links.append(ans)
                 if args.verbose > 0:
                     console.log(f"course_link : {course_links[-1]}")
-            time.sleep(0.05)    
+            time.sleep(0.05)
     return course_links
 
 
 def get_course_names():
-    console = Console()
     ''' get courses names'''
     courses_table = list(homePage_soup.find('table', {
         'id': 'ContentPlaceHolderright_ContentPlaceHoldercontent_GridViewcourses'}))
@@ -178,8 +177,7 @@ def get_link_master(driver):
 
 def get_video_ids(driver):
     ''' get id for videos and pass it to get the link master '''
-    console = Console()
-    with console.status("[bold green] Getting videos names and ids") as status:
+    with console.status("[bold green] Getting videos names and ids") :
         for _ in range(30):
             driver.execute_script(
                 "window.scrollTo(0, document.body.scrollHeight);")
@@ -202,6 +200,7 @@ def get_video_ids(driver):
                     if args.verbose > 1:
                         time.sleep(0.05)
                         console.log(names[-1])
+
     console.rule("Scraping")
     with alive_bar(len(ids), title='Scraping Links', bar='blocks', spinner='dots_reverse') as bar:
         for item in ids:
@@ -227,7 +226,7 @@ def bye():
     [italic bold yellow]https://github.com/aboueleyes/cms-scrapper[/italic bold yellow]
 
     [italic cyan]Feedback and contribution is welcome as well :smiley:![/italic cyan]
-        ''', title="Bye!"),justify="center")
+        ''', title="Bye!"), justify="center")
 
 
 def handler(signal_received, frame):
@@ -235,6 +234,8 @@ def handler(signal_received, frame):
     print('\nSIGINT or CTRL-C detected. Exiting gracefully')
     bye()
     exit(0)
+
+
 if __name__ == "__main__":
     signal(SIGINT, handler)
 
@@ -287,22 +288,22 @@ if __name__ == "__main__":
     course_link = choose_course()
 
     driver = webdriver.Chrome(desired_capabilities=caps, options=options)
-    
+
     if args.verbose > 0:
         console = Console()
         console.log("[-] Intailizing The Browser", style="bold yellow")
-    
+
     driver.get(
         f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
 
     names, links = [], []
-    
+
     get_video_ids(driver)
-    
+
     driver.quit()
 
     my_dict = dict(zip(links, names))
-    
+
     with open(args.output, 'w') as fp:
         json.dump(my_dict, fp)
 
