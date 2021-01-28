@@ -7,19 +7,6 @@ A selenium (headless browser) script that scrapes video links from CMS website
 
 The script scrapes the m3u8 file so you can access the videos from dacast directly, making it very easy to stream or to download 
 
-## Showcase 
-#### Scrapping
-
-[![asciicast](https://asciinema.org/a/RJ1c0PynTzM1u0hhWznKBLMm1.svg)](https://asciinema.org/a/RJ1c0PynTzM1u0hhWznKBLMm1)
-
-#### Downloading 
-
-[![asciicast](https://asciinema.org/a/TxObSGcbKXoq4J5bZjIqs50KH.svg)](https://asciinema.org/a/TxObSGcbKXoq4J5bZjIqs50KH)
-
-#### Playing 
-
-[![asciicast](https://asciinema.org/a/igiytcXttjgadEWaHhOaPGsus.svg)](https://asciinema.org/a/igiytcXttjgadEWaHhOaPGsus)
-
 ## Installation 
 
 ```bash
