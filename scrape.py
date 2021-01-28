@@ -78,7 +78,7 @@ def welcome():
     console.log()
     console.print(Panel.fit(f'''        [bold cyan] Welcome [/bold cyan] [bold yellow] {first_name.upper()} {last_name.upper()} [/bold yellow]       
 
-         [bold magenta]Run $ python srape.py -h for help[/bold magenta]           
+         [bold magenta]Run $ python scrape.py -h for help[/bold magenta]           
         ''', title="Welcome!"), justify="center")
 
 
@@ -231,7 +231,7 @@ def bye():
 
 def handler(signal_received, frame):
     # Handle any cleanup here
-    print('\nSIGINT or CTRL-C detected. Exiting gracefully')
+    print('\n[bold]SIGINT or CTRL-C detected. [red]Exiting gracefully[/red][/bold]')
     bye()
     exit(0)
 
@@ -267,7 +267,7 @@ if __name__ == "__main__":
         {
             'type': 'input',
             'name': 'username',
-            'message': 'Enter your username:',
+            'message': 'Enter your GUC username:',
         },
         {
             'type': 'password',
