@@ -4,6 +4,8 @@
 This script allows the user to scarpe all video links and save it to a file
 """
 
+from rich import print
+from rich.panel import Panel
 import argparse
 import sys
 import json
@@ -99,6 +101,15 @@ def get_credinalities():
 
 
 username, password = get_credinalities()
+
+def welcome():
+    first_name = username.split(".")[0]
+    last_name = username.split(".")[1].split("@")[0]
+    print(Panel.fit(f'''        [bold cyan] Welcome [/bold cyan] [bold yellow] {first_name.upper()} {last_name.upper()} [/bold yellow]       
+
+         [bold magenta]Run $ python srape.py -h for help[/bold magenta]           
+        ''', title="Welcome!"),)
+welcome()    
 session = requests.Session()
 homePage = session.get("https://cms.guc.edu.eg/",
                        verify=False, auth=HttpNtlmAuth(username, password))
@@ -248,8 +259,15 @@ def get_video_ids(driver):
             except:
                 print("")
             bar()    
+def bye ():
+    print(Panel.fit(''' [bold red]Thank you [/bold red][bold]for using cms-scraper 
 
+    If you enjoy it, feel free to leave a [/bold][bold red]star[/bold red]
 
+    [italic bold yellow]https://github.com/aboueleyes/cms-scrapper[/italic bold yellow]
+
+    [italic cyan]Feedback and contribution is welcome as well :smiley:![/italic cyan]
+        ''', title="Bye!"))
 if __name__ == "__main__":
     get_video_ids(driver)
     driver.quit()
@@ -257,3 +275,4 @@ if __name__ == "__main__":
     my_dict = dict(zip(links, names))
     with open(args.output, 'w') as fp:
         json.dump(my_dict, fp)
+    bye() 
