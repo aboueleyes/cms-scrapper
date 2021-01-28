@@ -4,17 +4,15 @@
 This script allows the user to scarpe all video links and save it to a file
 """
 
-from rich import print
-from rich.panel import Panel
 import argparse
-import sys
 import json
 import os
 import re
+import sys
+import time
 import urllib.request
 
 import requests
-import time 
 import urllib3
 from alive_progress import alive_bar
 from bs4 import BeautifulSoup as bs
@@ -23,6 +21,7 @@ from PyInquirer import print_json, prompt
 from requests_ntlm import HttpNtlmAuth
 from rich import print
 from rich.console import Console
+from rich.panel import Panel
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -32,52 +31,20 @@ __copyright__ = 'Copyright (C) 2021 Ibrahim Abou Elenein'
 __license__ = 'MIT'
 __version__ = '2021.1.0'
 
-# args options
-praser = argparse.ArgumentParser(
-    prog="cms-scrapper",
-    description=''' 
-                scarpe m3u8 for cms website
-            '''
-)
-praser.add_argument(
-    '-o', '--output', help='name of output file', required=True)
-praser.add_argument('--verbose', '-v',
-                    help='be more talktive', action='count', default=0)
-args = praser.parse_args()
-# ssl Warning
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-console = Console()
-# selenium options
-caps = DesiredCapabilities.CHROME
-caps['goog:loggingPrefs'] = {'performance': 'ALL'}
-options = webdriver.ChromeOptions()
-options.add_argument('headless')
-options.add_argument("--window-size=1920,1080")
 
-questions = [
-    {
-        'type': 'input',
-        'name': 'username',
-        'message': 'Enter your username:',
-    },
-    {
-        'type': 'password',
-        'message': 'Enter your GUC password:',
-        'name': 'password'
-    }
-]
-
-def authenticate_user(username,password) :
+def authenticate_user(username, password):
     session = requests.Session()
     r = session.get("https://cms.guc.edu.eg/",
-                       verify=False, auth=HttpNtlmAuth(username, password))
+                    verify=False, auth=HttpNtlmAuth(username, password))
     if r.status_code == 200:
-        console.log("[+] You are authorized",style="bold green")
+        console.log("[+] You are authorized", style="bold green")
     else:
-        console.log("[!] You are not authorized. review your login credentials",style="bold red")
-        if os.path.isfile(".env") :
+        console.log(
+            "[!] You are not authorized. review your login credentials", style="bold red")
+        if os.path.isfile(".env"):
             os.remove(".env")
         sys.exit(1)
+
 
 def get_credinalities():
     ''' login to cms website'''
@@ -85,7 +52,7 @@ def get_credinalities():
         cred = prompt(questions)
         user_name = list(cred.values())[0]
         pass_word = list(cred.values())[1]
-        authenticate_user(user_name,pass_word)
+        authenticate_user(user_name, pass_word)
         file_env = open(".env", "w")
         file_env.write(user_name+"\n"+str(pass_word))
         file_env.close()
@@ -99,9 +66,6 @@ def get_credinalities():
     return user_name, pass_word
 
 
-
-username, password = get_credinalities()
-
 def welcome():
     first_name = username.split(".")[0]
     last_name = username.split(".")[1].split("@")[0]
@@ -109,11 +73,6 @@ def welcome():
 
          [bold magenta]Run $ python srape.py -h for help[/bold magenta]           
         ''', title="Welcome!"),)
-welcome()    
-session = requests.Session()
-homePage = session.get("https://cms.guc.edu.eg/",
-                       verify=False, auth=HttpNtlmAuth(username, password))
-homePage_soup = bs(homePage.text, 'html.parser')
 
 
 def get_avaliable_courses():
@@ -163,37 +122,25 @@ def choose_course():
     for i in links:
         courses.append(i)
     questions = [
-    {
-        'type': 'list',
-        'name': 'theme',
-        'message': 'What Course do you want?',
-        'choices': courses
-    }
+        {
+            'type': 'list',
+            'name': 'theme',
+            'message': 'What Course do you want?',
+            'choices': courses
+        }
     ]
     course = prompt(questions)
     course = list(course.values())[0]
     course_url = links.get(course)
     return course_url
 
-course_link = choose_course()
-
-driver = webdriver.Chrome(desired_capabilities=caps, options=options)
-if args.verbose > 0 :
-    console = Console()
-    console.log("[-] Intailizing The Browser",style="bold yellow")
-driver.get(
-    f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
-
 
 def process_browser_log_entry(entry):
     ''' gets log of process'''
     response = json.loads(entry['message'])['message']
-    if args.verbose > 7 :
+    if args.verbose > 7:
         print(response)
     return response
-
-
-names, links = [], []
 
 
 def get_link_master(driver):
@@ -245,7 +192,7 @@ def get_video_ids(driver):
                         time.sleep(0.05)
                         console.log(names[-1])
 
-    with alive_bar(len(ids), title='Scrapping links', bar='blocks',spinner='dots_reverse') as bar:
+    with alive_bar(len(ids), title='Scrapping links', bar='blocks', spinner='dots_reverse') as bar:
         for item in ids:
             driver.quit()
             driver = webdriver.Chrome(
@@ -258,8 +205,10 @@ def get_video_ids(driver):
                 get_link_master(driver)
             except:
                 print("")
-            bar()    
-def bye ():
+            bar()
+
+
+def bye():
     print(Panel.fit(''' [bold red]Thank you [/bold red][bold]for using cms-scraper 
 
     If you enjoy it, feel free to leave a [/bold][bold red]star[/bold red]
@@ -268,11 +217,70 @@ def bye ():
 
     [italic cyan]Feedback and contribution is welcome as well :smiley:![/italic cyan]
         ''', title="Bye!"))
+
+
 if __name__ == "__main__":
+
+    # args options
+    praser = argparse.ArgumentParser(
+        prog="cms-scrapper",
+        description=''' 
+                    scarpe m3u8 for cms website
+                '''
+    )
+    praser.add_argument(
+        '-o', '--output', help='name of output file', required=True)
+    praser.add_argument('--verbose', '-v',
+                        help='be more talktive', action='count', default=0)
+    args = praser.parse_args()
+
+    # ssl Warning
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    console = Console()
+
+    # selenium options
+    caps = DesiredCapabilities.CHROME
+    caps['goog:loggingPrefs'] = {'performance': 'ALL'}
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument("--window-size=1920,1080")
+
+    questions = [
+        {
+            'type': 'input',
+            'name': 'username',
+            'message': 'Enter your username:',
+        },
+        {
+            'type': 'password',
+            'message': 'Enter your GUC password:',
+            'name': 'password'
+        }
+    ]
+
+    username, password = get_credinalities()
+
+    welcome()
+
+    session = requests.Session()
+    homePage = session.get("https://cms.guc.edu.eg/",
+                           verify=False, auth=HttpNtlmAuth(username, password))
+    homePage_soup = bs(homePage.text, 'html.parser')
+
+    course_link = choose_course()
+
+    driver = webdriver.Chrome(desired_capabilities=caps, options=options)
+    if args.verbose > 0:
+        console = Console()
+        console.log("[-] Intailizing The Browser", style="bold yellow")
+    driver.get(
+        f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
+
+    names, links = [], []
     get_video_ids(driver)
     driver.quit()
 
     my_dict = dict(zip(links, names))
     with open(args.output, 'w') as fp:
         json.dump(my_dict, fp)
-    bye() 
+    bye()
