@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-"""scrape
+"""
+
 This script allows the user to scarpe all video links and save it to a file
+
 """
 
 import argparse
@@ -37,9 +39,11 @@ def authenticate_user(username, password):
     r = session.get("https://cms.guc.edu.eg/",
                     verify=False, auth=HttpNtlmAuth(username, password))
     if r.status_code == 200:
-        console.log("[+] You are authorized", style="bold green")
+        console.log()
+        console.rule("[+] You are authorized", style="bold green")
     else:
-        console.log(
+        console.log()
+        console.rule(
             "[!] You are not authorized. review your login credentials", style="bold red")
         if os.path.isfile(".env"):
             os.remove(".env")
@@ -49,6 +53,7 @@ def authenticate_user(username, password):
 def get_credinalities():
     ''' login to cms website'''
     if not os.path.isfile(".env"):
+        console.rule("[**] Credentials")
         cred = prompt(questions)
         user_name = list(cred.values())[0]
         pass_word = list(cred.values())[1]
@@ -69,10 +74,11 @@ def get_credinalities():
 def welcome():
     first_name = username.split(".")[0]
     last_name = username.split(".")[1].split("@")[0]
-    print(Panel.fit(f'''        [bold cyan] Welcome [/bold cyan] [bold yellow] {first_name.upper()} {last_name.upper()} [/bold yellow]       
+    console.log()
+    console.print(Panel.fit(f'''        [bold cyan] Welcome [/bold cyan] [bold yellow] {first_name.upper()} {last_name.upper()} [/bold yellow]       
 
          [bold magenta]Run $ python srape.py -h for help[/bold magenta]           
-        ''', title="Welcome!"),)
+        ''', title="Welcome!"),justify="center")
 
 
 def get_avaliable_courses():
@@ -80,6 +86,8 @@ def get_avaliable_courses():
     console = Console()
     course_links = []
     link_tags = homePage_soup('a')
+    console.rule("[::] Fetching courses")
+    console.log()
     with console.status("[bold green] Fetching courses") as status:
         for link_tag in link_tags:
             ans = link_tag.get('href', None)
@@ -90,6 +98,7 @@ def get_avaliable_courses():
                 course_links.append(ans)
                 if args.verbose > 0:
                     console.log(f"course_link : {course_links[-1]}")
+            time.sleep(0.05)    
     return course_links
 
 
@@ -124,11 +133,13 @@ def choose_course():
     questions = [
         {
             'type': 'list',
-            'name': 'theme',
+            'name': 'size',
             'message': 'What Course do you want?',
             'choices': courses
         }
     ]
+    console.rule("[..] Choosing Course")
+    console.log()
     course = prompt(questions)
     course = list(course.values())[0]
     course_url = links.get(course)
@@ -152,7 +163,7 @@ def get_link_master(driver):
             event for event in events if 'Network.response' in event['method']]
 
         for event in events:
-            if args.verbose > 3:
+            if args.verbose > 3 and args.verbose < 7:
                 console.log(event)
             if 'params' in event.keys():
                 if 'response' in event['params'].keys():
@@ -191,8 +202,8 @@ def get_video_ids(driver):
                     if args.verbose > 1:
                         time.sleep(0.05)
                         console.log(names[-1])
-
-    with alive_bar(len(ids), title='Scrapping links', bar='blocks', spinner='dots_reverse') as bar:
+    console.rule("Scraping")
+    with alive_bar(len(ids), title='Scraping Links', bar='blocks', spinner='dots_reverse') as bar:
         for item in ids:
             driver.quit()
             driver = webdriver.Chrome(
@@ -209,14 +220,14 @@ def get_video_ids(driver):
 
 
 def bye():
-    print(Panel.fit(''' [bold red]Thank you [/bold red][bold]for using cms-scraper 
+    console.print(Panel.fit('''    [bold red]Thank YOU [/bold red][bold]for using  cms scraper 
 
-    If you enjoy it, feel free to leave a [/bold][bold red]star[/bold red]
+    If you enjoy it, feel free to leave a [/bold][bold red]Star[/bold red]
 
     [italic bold yellow]https://github.com/aboueleyes/cms-scrapper[/italic bold yellow]
 
     [italic cyan]Feedback and contribution is welcome as well :smiley:![/italic cyan]
-        ''', title="Bye!"))
+        ''', title="Bye!"),justify="center")
 
 
 if __name__ == "__main__":
@@ -270,17 +281,23 @@ if __name__ == "__main__":
     course_link = choose_course()
 
     driver = webdriver.Chrome(desired_capabilities=caps, options=options)
+    
     if args.verbose > 0:
         console = Console()
         console.log("[-] Intailizing The Browser", style="bold yellow")
+    
     driver.get(
         f'https://{username}:{password}@cms.guc.edu.eg{course_link}')
 
     names, links = [], []
+    
     get_video_ids(driver)
+    
     driver.quit()
 
     my_dict = dict(zip(links, names))
+    
     with open(args.output, 'w') as fp:
         json.dump(my_dict, fp)
+
     bye()
