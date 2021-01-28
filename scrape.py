@@ -12,6 +12,7 @@ import os
 import re
 import sys
 import time
+from signal import signal, SIGINT
 import urllib.request
 
 import requests
@@ -32,7 +33,6 @@ __author__ = 'Ibrahim Abou Elenein'
 __copyright__ = 'Copyright (C) 2021 Ibrahim Abou Elenein'
 __license__ = 'MIT'
 __version__ = '2021.1.0'
-
 
 def authenticate_user(username, password):
     session = requests.Session()
@@ -230,7 +230,13 @@ def bye():
         ''', title="Bye!"),justify="center")
 
 
+def handler(signal_received, frame):
+    # Handle any cleanup here
+    print('\nSIGINT or CTRL-C detected. Exiting gracefully')
+    bye()
+    exit(0)
 if __name__ == "__main__":
+    signal(SIGINT, handler)
 
     # args options
     praser = argparse.ArgumentParser(
