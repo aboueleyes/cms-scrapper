@@ -253,12 +253,14 @@ if __name__ == "__main__":
                         help='be more talktive', action='count', default=0)
     praser.add_argument('-r','--replace', help='replace existing file', action='store_true',default=False)
     args = praser.parse_args()
+
     if os.path.isfile(args.output):
         if args.replace:
             os.remove(args.output)
         else:
-            print("file exists if you want to overwrite it please use -r")
+            print("[bold][red]file exists if you want to overwrite it please use -r :smiley:![/bold][/red]")
             sys.exit(0)
+
     # ssl Warning
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     console = Console()
