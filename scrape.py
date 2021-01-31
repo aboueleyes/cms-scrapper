@@ -185,7 +185,7 @@ def get_video_ids(driver):
         course_soup = bs(driver.page_source.encode("utf-8"), 'html.parser')
         inputs = course_soup('input')
 
-        for index, ink in enumerate(inputs):
+        for ink in inputs:
             if ink.get('value') == 'Watch Video':
                 if ink['id'] != "":
                     ids.append(ink['id'])
@@ -248,10 +248,17 @@ if __name__ == "__main__":
     )
     praser.add_argument(
         '-o', '--output', help='name of output file', required=True)
+
     praser.add_argument('--verbose', '-v',
                         help='be more talktive', action='count', default=0)
+    praser.add_argument('-r','--replace', help='replace existing file', action='store_true',default=False)
     args = praser.parse_args()
-
+    if os.path.isfile(args.output):
+        if args.replace:
+            os.remove(args.output)
+        else:
+            print("file exists if you want to overwrite it please use -r")
+            sys.exit(0)
     # ssl Warning
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     console = Console()
