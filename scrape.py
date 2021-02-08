@@ -71,7 +71,7 @@ def get_credinalities():
 
 
 def welcome():
-    ''' Welcome  the user '''
+    '''Welcome the user'''
     first_name = username.split(".")[0]
     last_name = username.split(".")[1].split("@")[0]
     console.log()
@@ -102,7 +102,7 @@ def get_avaliable_courses():
 
 
 def get_course_names():
-    ''' get courses names'''
+    '''get courses names'''
     courses_table = list(homePage_soup.find('table', {
         'id': 'ContentPlaceHolderright_ContentPlaceHoldercontent_GridViewcourses'}))
     courses_name = []
@@ -116,7 +116,7 @@ def get_course_names():
 
 
 def choose_course():
-    ''' promt the user to choose the string '''
+    '''promt the user to choose the string'''
     if not os.path.isfile(".courses.json"):
         courses_links = get_avaliable_courses()
         courses_names = get_course_names()
@@ -145,7 +145,7 @@ def choose_course():
 
 
 def process_browser_log_entry(entry):
-    ''' gets log of process'''
+    '''gets log of process'''
     response = json.loads(entry['message'])['message']
     if args.verbose > 7:
         print(response)
@@ -153,7 +153,7 @@ def process_browser_log_entry(entry):
 
 
 def get_link_master(driver):
-    ''' scape m3u8 link for one video '''
+    '''scape m3u8 link for one video'''
     while True:
         browser_log = driver.get_log('performance')
         events = [process_browser_log_entry(entry) for entry in browser_log]
@@ -175,7 +175,7 @@ def get_link_master(driver):
 
 
 def get_video_ids(driver):
-    ''' get id for videos and pass it to get the link master '''
+    '''get id for videos and pass it to get the link master'''
     with console.status("[bold green] Getting videos names and ids"):
         for _ in range(30):
             driver.execute_script(
@@ -232,7 +232,7 @@ def handler(signal_received, frame):
     # Handle any cleanup here
     print('\n[bold]SIGINT or CTRL-C detected. [red]Exiting gracefully[/red][/bold]')
     bye()
-    exit(0)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
@@ -241,7 +241,7 @@ if __name__ == "__main__":
     # args options
     praser = argparse.ArgumentParser(
         prog="cms-scrapper",
-        description=''' 
+        description='''
                     scarpe m3u8 for cms website
                 '''
     )
