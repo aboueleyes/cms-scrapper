@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
-"""
-
-This script allows the user to scarpe all video links and save it to a file
-
-"""
+"""This script allows the user to scarpe all video links and save it to a file"""
 
 import argparse
 import json
