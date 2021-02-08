@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-'''
-download use youtube-dl to download videos
-'''
+'''download use youtube-dl to download videos'''
 import argparse
 import json
 import os
