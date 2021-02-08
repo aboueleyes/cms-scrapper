@@ -37,4 +37,3 @@ The script is open source under the MIT License.
 ## DISCLAIMER 
 
 This script is in no way legally associated with the GUC. It is simply a personal project for automating day-to-day tasks involving the GUC system.
-
