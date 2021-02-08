@@ -12,21 +12,18 @@ import os
 import re
 import sys
 import time
-from signal import signal, SIGINT
-import urllib.request
+from signal import SIGINT, signal
 
 import requests
 import urllib3
 from alive_progress import alive_bar
 from bs4 import BeautifulSoup as bs
-from iterfzf import iterfzf
-from PyInquirer import print_json, prompt
+from PyInquirer import  prompt
 from requests_ntlm import HttpNtlmAuth
 from rich import print
 from rich.console import Console
 from rich.panel import Panel
 from selenium import webdriver
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 __author__ = 'Ibrahim Abou Elenein'
@@ -36,6 +33,7 @@ __version__ = '2021.1.0'
 
 
 def authenticate_user(username, password):
+    '''validate user credentials'''
     session = requests.Session()
     r = session.get("https://cms.guc.edu.eg/",
                     verify=False, auth=HttpNtlmAuth(username, password))
@@ -52,7 +50,7 @@ def authenticate_user(username, password):
 
 
 def get_credinalities():
-    ''' login to cms website'''
+    '''login to cms website'''
     if not os.path.isfile(".env"):
         console.rule("[**] Credentials")
         cred = prompt(questions)
@@ -73,6 +71,7 @@ def get_credinalities():
 
 
 def welcome():
+    ''' Welcome  the user '''
     first_name = username.split(".")[0]
     last_name = username.split(".")[1].split("@")[0]
     console.log()
@@ -83,12 +82,12 @@ def welcome():
 
 
 def get_avaliable_courses():
-    ''' fetch courses links'''
+    '''fetch courses links'''
     course_links = []
     link_tags = homePage_soup('a')
     console.rule("[::] Fetching courses")
     console.log()
-    with console.status("[bold green] Fetching courses") as status:
+    with console.status("[bold green] Fetching courses")  :
         for link_tag in link_tags:
             ans = link_tag.get('href', None)
             if ans is None:
@@ -107,7 +106,7 @@ def get_course_names():
     courses_table = list(homePage_soup.find('table', {
         'id': 'ContentPlaceHolderright_ContentPlaceHoldercontent_GridViewcourses'}))
     courses_name = []
-    with console.status("[bold green] getting courses names") as status:
+    with console.status("[bold green] getting courses names") :
         for i in range(2, len(courses_table) - 1):
             courses_name.append(re.sub(
                 r'\n*[\(][\|]([^\|]*)[\|][\)]([^\(]*)[\(].*\n*', '[\\1]\\2', courses_table[i].text))
@@ -177,7 +176,7 @@ def get_link_master(driver):
 
 def get_video_ids(driver):
     ''' get id for videos and pass it to get the link master '''
-    with console.status("[bold green] Getting videos names and ids") :
+    with console.status("[bold green] Getting videos names and ids"):
         for _ in range(30):
             driver.execute_script(
                 "window.scrollTo(0, document.body.scrollHeight);")
@@ -251,14 +250,16 @@ if __name__ == "__main__":
 
     praser.add_argument('--verbose', '-v',
                         help='be more talktive', action='count', default=0)
-    praser.add_argument('-r','--replace', help='replace existing file', action='store_true',default=False)
+    praser.add_argument('-r', '--replace', help='replace existing file',
+                        action='store_true', default=False)
     args = praser.parse_args()
 
     if os.path.isfile(args.output):
         if args.replace:
             os.remove(args.output)
         else:
-            print("[bold][red]file exists if you want to overwrite it please use -r :smiley:![/bold][/red]")
+            print(
+                "[bold][red]file exists if you want to overwrite it please use -r :smiley:![/bold][/red]")
             sys.exit(0)
 
     # ssl Warning
