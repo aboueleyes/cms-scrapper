@@ -24,7 +24,7 @@ Also you need mpv or vlc to stream the videos
 > python play.py -i "links_file" # for streaming
 > python download.py -i "links_file" # for downloading
  ```
-##  Contribution 
+## Contribution 
 
 For any feedback or issues, feel free to open an issue, make sure to keep it as detailed as possible.
 
@@ -34,5 +34,7 @@ If you would like to contribute, feel free to fork the repo, and open a PR. Howe
 
 The script is open source under the MIT License.
 
-DISCLAIMER: This script is in no way legally associated with the GUC. It is simply a personal project for automating day-to-day tasks involving the GUC system.
+## DISCLAIMER 
+
+This script is in no way legally associated with the GUC. It is simply a personal project for automating day-to-day tasks involving the GUC system.
 
