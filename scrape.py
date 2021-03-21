@@ -11,6 +11,7 @@ import time
 from signal import SIGINT, signal
 
 import requests
+import pyshorteners
 import urllib3
 from alive_progress import alive_bar
 from bs4 import BeautifulSoup as bs
@@ -155,7 +156,6 @@ def get_link_master(driver):
         events = [process_browser_log_entry(entry) for entry in browser_log]
         events = [
             event for event in events if 'Network.response' in event['method']]
-
         for event in events:
             if args.verbose > 3 and args.verbose < 7:
                 console.log(event)
@@ -163,7 +163,7 @@ def get_link_master(driver):
                 if 'response' in event['params'].keys():
                     if 'url' in event['params']['response'].keys():
                         if re.search("master", event['params']['response']['url']):
-                            links.append(event['params']['response']['url'])
+                            links.append(s.tinyurl.short(event['params']['response']['url']))
                             if args.verbose > 0:
                                 console.log(
                                     f" {event['params']['response']['url']} ")
@@ -234,6 +234,7 @@ def handler(signal_received, frame):
 if __name__ == "__main__":
     signal(SIGINT, handler)
 
+    s = pyshorteners.Shortener()
     # args options
     praser = argparse.ArgumentParser(
         prog="cms-scrapper",

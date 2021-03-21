@@ -6,3 +6,5 @@ selenium
 alive_progress
 PyInquirer
 rich
+pyshorteners
+
