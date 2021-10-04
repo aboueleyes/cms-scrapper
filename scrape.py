@@ -217,7 +217,7 @@ def get_video_ids(driver):
 
     console.rule("Scraping")
     with alive_bar(
-        len(ids), title="Scraping Links", bar="blocks", spinner="dots_reverse"
+        len(ids), title="Scraping Links", bar="blocks", spinner="dots"
     ) as bar:
         for item in ids:
             driver.quit()
